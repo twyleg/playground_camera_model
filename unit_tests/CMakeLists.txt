@@ -25,7 +25,7 @@ set_target_properties(${TARGET_NAME}
 # link against libs
 #
 target_link_libraries(${TARGET_NAME}
-    template_project_cpp::core
+    playground_camera_model::core
 	GTest::gmock
 	GTest::gtest
 	GTest::gmock_main

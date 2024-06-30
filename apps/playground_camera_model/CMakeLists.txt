@@ -1,5 +1,5 @@
 # Copyright (C) 2024 twyleg
-set(TARGET_NAME template_project_cpp)
+set(TARGET_NAME playground_camera_model)
 
 
 #
@@ -24,5 +24,5 @@ set_target_properties(${TARGET_NAME}
 # link against libs
 #
 target_link_libraries(${TARGET_NAME}
-    template_project_cpp::core
+    playground_camera_model::core
 )

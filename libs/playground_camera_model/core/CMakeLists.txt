@@ -1,5 +1,5 @@
 # Copyright (C) 2024 twyleg
-set(NAMESPACE template_project_cpp)
+set(NAMESPACE playground_camera_model)
 set(MODULE core)
 
 
@@ -10,15 +10,21 @@ set(TARGET_NAME "${NAMESPACE}_${MODULE}")
 #
 find_package(fmt REQUIRED)
 find_package(Boost COMPONENTS REQUIRED system)
+find_package(OpenCV REQUIRED)
 
 
 #
 # add source files to target
 #
 add_library(${TARGET_NAME}
-    example_class.cc
-    example_class.h
+    camera_model.cc
+    camera_model.h
+    gnuplot.cc
+    gnuplot.h
+    homogeneous_transformation_matrix.cc
+    homogeneous_transformation_matrix.h
 )
+
 
 add_library("${NAMESPACE}::${MODULE}" ALIAS ${TARGET_NAME})
 
@@ -39,6 +45,7 @@ set_target_properties(${TARGET_NAME}
 target_link_libraries(${TARGET_NAME}
     fmt::fmt
     Boost::system
+    ${OpenCV_LIBS}
 )
 
 
@@ -47,4 +54,5 @@ target_link_libraries(${TARGET_NAME}
 #
 target_include_directories(${TARGET_NAME}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../../
+    PRIVATE ${OpenCV_INCLUDE_DIRS}
 )
