@@ -2,7 +2,10 @@
 #include "homogeneous_transformation_matrix.h"
 
 
-cv::Mat HomogeneousTransformationMatrixFactory::createHomogeneousTransformationMatrix(
+namespace playground_camera_model::homogeneous_transformation_matrix {
+
+
+cv::Mat createHomogeneousTransformationMatrix(
 		double translationX,
 		double translationY,
 		double translationZ,
@@ -41,7 +44,7 @@ cv::Mat HomogeneousTransformationMatrixFactory::createHomogeneousTransformationM
 
 }
 
-cv::Mat HomogeneousTransformationMatrixFactory::createPoint(double x, double y, double z){
+cv::Mat createPoint(double x, double y, double z){
 
 	cv::Mat point(4,1,CV_64F);
 
@@ -51,4 +54,6 @@ cv::Mat HomogeneousTransformationMatrixFactory::createPoint(double x, double y, 
 	point.at<double>(3) = 1;
 
 	return point;
+}
+
 }

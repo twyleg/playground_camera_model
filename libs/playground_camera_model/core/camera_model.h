@@ -5,6 +5,8 @@
 
 #include <opencv2/opencv.hpp>
 
+namespace playground_camera_model {
+
 class CameraModel {
 
 private:
@@ -16,8 +18,6 @@ private:
 	uint32_t resolutionY;
 	uint32_t u0;
 	uint32_t v0;
-
-
 
 	cv::Mat cameraImage;
 
@@ -34,10 +34,12 @@ public:
 				uint32_t u0,
 				uint32_t v0);
 
-	void drawCameraImagePoint(cv::Mat &point);
-	void drawCameraImageLine(cv::Mat &point0, cv::Mat &point1);
+	void drawCameraImagePoint(const cv::Mat& point);
+	void drawCameraImageLine(const cv::Mat& point0, const cv::Mat& point1);
 
 	void resetCameraImage();
-	cv::Mat &getCameraImage();
+	cv::Mat& getCameraImage();
 
 };
+
+}

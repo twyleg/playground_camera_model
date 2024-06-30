@@ -19,8 +19,6 @@ find_package(OpenCV REQUIRED)
 add_library(${TARGET_NAME}
     camera_model.cc
     camera_model.h
-    gnuplot.cc
-    gnuplot.h
     homogeneous_transformation_matrix.cc
     homogeneous_transformation_matrix.h
 )

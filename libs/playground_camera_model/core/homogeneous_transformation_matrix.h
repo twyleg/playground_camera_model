@@ -3,27 +3,18 @@
 
 #include <opencv2/opencv.hpp>
 
-class HomogeneousTransformationMatrixFactory;
-typedef HomogeneousTransformationMatrixFactory HtmFactory;
+namespace playground_camera_model::homogeneous_transformation_matrix {
 
-class HomogeneousTransformationMatrixFactory{
-
-private:
-
-
-public:
-
-
-
-	static cv::Mat createHomogeneousTransformationMatrix(
-			double translationX,
-			double translationY,
-			double translationZ,
-			double rotationRoll,
-			double rotationPitch,
-			double rotationYaw);
+cv::Mat createHomogeneousTransformationMatrix(
+		double translationX,
+		double translationY,
+		double translationZ,
+		double rotationRoll,
+		double rotationPitch,
+		double rotationYaw);
 
 
-	static cv::Mat createPoint(double x, double y, double z);
+cv::Mat createPoint(double x, double y, double z);
 
-};
+
+}
