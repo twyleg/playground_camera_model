@@ -15,7 +15,8 @@ jobs:
         sudo apt install cmake \
         	g++ \
         	libfmt-dev \
-        	libboost-all-dev
+        	libboost-all-dev \
+          libopencv-dev
     - name: 'Build'
       run: |
         mkdir build/
