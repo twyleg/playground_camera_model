@@ -13,6 +13,7 @@ The template is based on the following components:
 * boost
 * googletest
 * fmt
+* libopencv-dev
 
 For a Debian/Ubuntu system, run the following command to install the dependencies:
 
@@ -21,7 +22,8 @@ For a Debian/Ubuntu system, run the following command to install the dependencie
 		cmake \
 		g++ \
 		libfmt-dev \
-		libboost-all-dev
+		libboost-all-dev \
+		libopencv-dev
 
 GoogleTest is pulled in as a git submodule to avoid problems with missing cmake files in sub distributions.
 
@@ -29,10 +31,10 @@ GoogleTest is pulled in as a git submodule to avoid problems with missing cmake 
 
 Clone, prepare and build with the following steps:
 
-        git clone git@github.com:twyleg/playground_camera_model.git
-        cd playground_camera_model
+	git clone git@github.com:twyleg/playground_camera_model.git
+	cd playground_camera_model
 
-        git submodule update --init
+	git submodule update --init
 	
 	mkdir build/
 	cd build/
