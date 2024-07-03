@@ -5,7 +5,7 @@ from math import cos, sin, pi
 class Matrix_Functions:
 
     def create_homogeneous_transformation_matrix(translation_x: float, translation_y: float, translation_z: float,
-                                                rotation_roll: float, rotation_pitch: float, rotation_yaw: float) -> np.array:
+                                                rotation_roll: float, rotation_pitch: float, rotation_yaw: float, scale: int) -> np.array:
 
         rotation_matrix_roll = np.array([
             [1,	                    0,					0,					0],
@@ -35,4 +35,19 @@ class Matrix_Functions:
             [0,	0,	0,	1]
         ])
 
-        return np.matmul(translation_matrix, np.matmul(np.matmul(rotation_matrix_yaw, rotation_matrix_pitch), rotation_matrix_roll))
+        if scale == 0:
+            scale = 1
+
+        scale_matrix = np.array([
+            [scale,	0,	    0,    0],
+            [0,	    scale,	0,  	0],
+            [0,	    0,	    scale,	0],
+            [0,	    0,	    0,	    1]
+        ])
+
+        transformation_matrix = np.matmul(translation_matrix,
+                                      np.matmul(scale_matrix,
+                                                np.matmul(rotation_matrix_yaw,
+                                                          np.matmul(rotation_matrix_pitch,
+                                                                    rotation_matrix_roll))))
+        return transformation_matrix
