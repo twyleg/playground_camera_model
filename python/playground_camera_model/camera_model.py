@@ -12,7 +12,7 @@ class CameraModel:
         self.u0: int = u0
         self.v0: int = v0
 
-        self.camera_image = np.zeros((resolution_y, resolution_x), dtype=np.uint8)
+        self.camera_image = np.zeros((resolution_y, resolution_x, 3), dtype=np.uint8)
         self.reset_camera_image()
 
         # Create camera transformation matrix I_T_C
@@ -36,23 +36,27 @@ class CameraModel:
     def draw_camera_image_point(self, C_point: np.array) -> None:
 
         I_point = np.matmul(self.I_T_C, C_point)
-        u = I_point[0] / I_point[2]
-        v = I_point[1] / I_point[2]
+        u = int(I_point[0] / I_point[2])
+        v = int(I_point[1] / I_point[2])
 
         cv.circle(self.camera_image, (u, v), 5, (255,0,0), 2)
+
+        print(u, v)
+        print()
 
     def draw_camera_image_line(self, C_point0: np.array, C_point1: np.array) -> None:
 
         I_point0 = self.I_T_C @ C_point0
         I_point1 = self.I_T_C @ C_point1
 
-        u0 = I_point0[0] / I_point0[2]
-        v0 = I_point0[1] / I_point0[2]
+        u0 = int(I_point0[0] / I_point0[2])
+        v0 = int(I_point0[1] / I_point0[2])
 
-        u1 = I_point1[0] / I_point1[2]
-        v1 = I_point1[1] / I_point1[2]
+        u1 = int(I_point1[0] / I_point1[2])
+        v1 = int(I_point1[1] / I_point1[2])
 
         cv.line(self.camera_image, (u0, v0), (u1, v1), (255,0,0), 1)
+
 
     def reset_camera_image(self) -> None:
         self.camera_image.fill(255)

@@ -1,11 +1,8 @@
 import numpy as np
 import cv2 as cv
-
-
 from math import cos, sin, pi
 
 from playground_camera_model.camera_model import CameraModel
-
 
 def create_homogeneous_transformation_matrix(translation_x: float, translation_y: float, translation_z: float,
                                              rotation_roll: float, rotation_pitch: float, rotation_yaw: float) -> np.array:
@@ -76,26 +73,6 @@ if __name__ == "__main__":
     Cube_cubeP6 = create_point(1, -1, 1)
     Cube_cubeP7 = create_point(1, 1, 1)
 
-    V_cubeP0(4, 1, CV_64F)
-    V_cubeP1(4, 1, CV_64F)
-    V_cubeP2(4, 1, CV_64F)
-    V_cubeP3(4, 1, CV_64F)
-
-    V_cubeP4(4, 1, CV_64F)
-    V_cubeP5(4, 1, CV_64F)
-    V_cubeP6(4, 1, CV_64F)
-    V_cubeP7(4, 1, CV_64F)
-
-    C_cubeP0(4, 1, CV_64F)
-    C_cubeP1(4, 1, CV_64F)
-    C_cubeP2(4, 1, CV_64F)
-    C_cubeP3(4, 1, CV_64F)
-
-    C_cubeP4(4, 1, CV_64F)
-    C_cubeP5(4, 1, CV_64F)
-    C_cubeP6(4, 1, CV_64F)
-    C_cubeP7(4, 1, CV_64F)
-
     # Create gui
     cv.namedWindow("image window", cv.WINDOW_AUTOSIZE)
     cv.namedWindow("camera settings", cv.WINDOW_AUTOSIZE)
@@ -119,21 +96,35 @@ if __name__ == "__main__":
     cv.createTrackbar("Pitch", "cube settings", 0, 3600, nothing)
     cv.createTrackbar("Yaw", "cube settings", 0, 3600, nothing)
 
+    camera_system_translation_x = cv.setTrackbarPos("X", "camera settings", 10000)
+    camera_system_translation_y = cv.setTrackbarPos("Y", "camera settings", 10000)
+    camera_system_translation_z = cv.setTrackbarPos("Z", "camera settings", 11000)
+    camera_system_rotation_roll = cv.setTrackbarPos("Roll", "camera settings", 2500)
+    camera_system_rotation_pitch = cv.setTrackbarPos("Pitch", "camera settings", 0)
+    camera_system_rotation_yaw = cv.setTrackbarPos("Yaw", "camera settings", 2700)
+
+    cube_system_translation_x = cv.setTrackbarPos("X", "cube settings", 14000)
+    cube_system_translation_y = cv.setTrackbarPos("Y", "cube settings", 10000)
+    cube_system_translation_z = cv.setTrackbarPos("Z", "cube settings", 11000)
+    cube_system_rotation_roll = cv.setTrackbarPos("Roll", "cube settings", 0)
+    cube_system_rotation_pitch = cv.setTrackbarPos("Pitch", "cube settings", 0)
+    cube_system_rotation_yaw = cv.setTrackbarPos("Yaw", "cube settings", 0)
+
 
     while True:
-        camera_system_translation_x = cv.getTrackbarPos("x", "camera settings")
-        camera_system_translation_y = cv.getTrackbarPos("y", "camera settings")
-        camera_system_translation_z = cv.getTrackbarPos("z", "camera settings")
-        camera_system_rotation_roll = cv.getTrackbarPos("roll", "camera settings")
-        camera_system_rotation_pitch = cv.getTrackbarPos("pitch", "camera settings")
-        camera_system_rotation_yaw = cv.getTrackbarPos("yaw", "camera settings")
+        camera_system_translation_x = cv.getTrackbarPos("X", "camera settings")
+        camera_system_translation_y = cv.getTrackbarPos("Y", "camera settings")
+        camera_system_translation_z = cv.getTrackbarPos("Z", "camera settings")
+        camera_system_rotation_roll = cv.getTrackbarPos("Roll", "camera settings")
+        camera_system_rotation_pitch = cv.getTrackbarPos("Pitch", "camera settings")
+        camera_system_rotation_yaw = cv.getTrackbarPos("Yaw", "camera settings")
 
-        cube_system_translation_x = cv.getTrackbarPos("x", "cube settings")
-        cube_system_translation_y = cv.getTrackbarPos("y", "cube settings")
-        cube_system_translation_z = cv.getTrackbarPos("z", "cube settings")
-        cube_system_rotation_roll = cv.getTrackbarPos("roll", "cube settings")
-        cube_system_rotation_pitch = cv.getTrackbarPos("pitch", "cube settings")
-        cube_system_rotation_yaw = cv.getTrackbarPos("yaw", "cube settings")
+        cube_system_translation_x = cv.getTrackbarPos("X", "cube settings")
+        cube_system_translation_y = cv.getTrackbarPos("Y", "cube settings")
+        cube_system_translation_z = cv.getTrackbarPos("Z", "cube settings")
+        cube_system_rotation_roll = cv.getTrackbarPos("Roll", "cube settings")
+        cube_system_rotation_pitch = cv.getTrackbarPos("Pitch", "cube settings")
+        cube_system_rotation_yaw = cv.getTrackbarPos("Yaw", "cube settings")
 
         # Update homogeneous transformation matrices
         V_T_C = create_homogeneous_transformation_matrix(
