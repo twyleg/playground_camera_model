@@ -1,6 +1,7 @@
 import numpy as np
 import cv2 as cv
 from math import cos, sin, pi
+import time
 
 from playground_camera_model.camera_model import CameraModel
 
@@ -110,6 +111,8 @@ if __name__ == "__main__":
     cube_system_rotation_pitch = cv.setTrackbarPos("Pitch", "cube settings", 0)
     cube_system_rotation_yaw = cv.setTrackbarPos("Yaw", "cube settings", 0)
 
+    start_time = time.time()
+    frame_count = 0
 
     while True:
         camera_system_translation_x = cv.getTrackbarPos("X", "camera settings")
@@ -187,6 +190,12 @@ if __name__ == "__main__":
         camera_model.draw_camera_image_line(C_cubeP2, C_cubeP6)
         camera_model.draw_camera_image_line(C_cubeP3, C_cubeP7)
 
+        #Calculate FPS
+        frame_count += 1
+        elapsed_time = time.time() - start_time
+        fps = frame_count / elapsed_time
+
+        cv.putText(camera_model.camera_image, f"FPS: {fps:.0f}", (10, 30), cv.FONT_HERSHEY_PLAIN, 1.2, (0, 255, 0), 1)
         cv.imshow("image window", camera_model.camera_image)
 
         # Wait for a short while
