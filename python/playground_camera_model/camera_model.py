@@ -1,5 +1,6 @@
 import numpy as np
 import cv2 as cv
+from typing import List
 
 
 class CameraModel:
@@ -41,9 +42,6 @@ class CameraModel:
 
         cv.circle(self.camera_image, (u, v), 5, (255,0,0), 2)
 
-        print(u, v)
-        print()
-
     def draw_camera_image_line(self, C_point0: np.array, C_point1: np.array) -> None:
 
         I_point0 = self.I_T_C @ C_point0
@@ -56,6 +54,27 @@ class CameraModel:
         v1 = int(I_point1[1] / I_point1[2])
 
         cv.line(self.camera_image, (u0, v0), (u1, v1), (255,0,0), 1)
+
+
+    def fill_poly(self, C_points: List[np.array]) -> None:
+
+        I_points = []
+
+        for C_point in C_points:
+            I_point = self.I_T_C @ C_point
+            
+            u0 = int(I_point[0] / I_point[2])
+            v0 = int(I_point[1] / I_point[2])
+
+            I_points.append((u0, v0))
+        
+
+        Poly_Points = np.array(I_points)
+
+        # for I_point in I_points:
+        #     Poly_Points.append([I_point[0],I_point[1]])
+
+        cv.fillPoly(self.camera_image, [Poly_Points], (255,0,0))
 
 
     def reset_camera_image(self) -> None:

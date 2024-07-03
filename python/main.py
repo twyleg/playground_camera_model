@@ -55,7 +55,8 @@ def DEG_TO_RAD(deg: float) -> float:
 if __name__ == "__main__":
     print("Started")
 
-    camera_model = CameraModel(0.00452, 0.00288, 0.004, 640, 480, 320, 240)
+    camera_model = CameraModel(0.00452, 0.00254, 0.004, 1280, 720, 1280/2, 720/2)
+
     print(camera_model.I_T_C)
 
     W_T_V = create_homogeneous_transformation_matrix(0, 0, 0, 0, 0, 0)
@@ -100,7 +101,7 @@ if __name__ == "__main__":
     camera_system_translation_x = cv.setTrackbarPos("X", "camera settings", 10000)
     camera_system_translation_y = cv.setTrackbarPos("Y", "camera settings", 10000)
     camera_system_translation_z = cv.setTrackbarPos("Z", "camera settings", 11000)
-    camera_system_rotation_roll = cv.setTrackbarPos("Roll", "camera settings", 2500)
+    camera_system_rotation_roll = cv.setTrackbarPos("Roll", "camera settings", 2700)
     camera_system_rotation_pitch = cv.setTrackbarPos("Pitch", "camera settings", 0)
     camera_system_rotation_yaw = cv.setTrackbarPos("Yaw", "camera settings", 2700)
 
@@ -190,10 +191,14 @@ if __name__ == "__main__":
         camera_model.draw_camera_image_line(C_cubeP2, C_cubeP6)
         camera_model.draw_camera_image_line(C_cubeP3, C_cubeP7)
 
+
+        camera_model.fill_poly([C_cubeP0, C_cubeP1, C_cubeP2])
+
         #Calculate FPS
         frame_count += 1
         elapsed_time = time.time() - start_time
         fps = frame_count / elapsed_time
+
 
         cv.putText(camera_model.camera_image, f"FPS: {fps:.0f}", (10, 30), cv.FONT_HERSHEY_PLAIN, 1.2, (0, 255, 0), 1)
         cv.imshow("image window", camera_model.camera_image)
