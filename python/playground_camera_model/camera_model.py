@@ -1,5 +1,6 @@
 import numpy as np
 import cv2 as cv
+from typing import List
 
 
 class CameraModel:
@@ -12,7 +13,7 @@ class CameraModel:
         self.u0: int = u0
         self.v0: int = v0
 
-        self.camera_image = np.zeros((resolution_y, resolution_x), dtype=np.uint8)
+        self.camera_image = np.zeros((resolution_y, resolution_x, 3), dtype=np.uint8)
         self.reset_camera_image()
 
         # Create camera transformation matrix I_T_C
@@ -34,25 +35,69 @@ class CameraModel:
         self.I_T_C = matrix_k @ matrix_c
 
     def draw_camera_image_point(self, C_point: np.array) -> None:
-
         I_point = np.matmul(self.I_T_C, C_point)
-        u = I_point[0] / I_point[2]
-        v = I_point[1] / I_point[2]
+        u = int(I_point[0] / I_point[2])
+        v = int(I_point[1] / I_point[2])
+        cv.circle(self.camera_image, (u, v), 5, (255, 0, 0), 2)
 
-        cv.circle(self.camera_image, (u, v), 5, (255,0,0), 2)
+    def draw_all_cube_points(self, cube_points) -> None:
+        for point in cube_points:
+            self.draw_camera_image_point(point)
+
 
     def draw_camera_image_line(self, C_point0: np.array, C_point1: np.array) -> None:
-
         I_point0 = self.I_T_C @ C_point0
         I_point1 = self.I_T_C @ C_point1
 
-        u0 = I_point0[0] / I_point0[2]
-        v0 = I_point0[1] / I_point0[2]
+        u0 = int(I_point0[0] / I_point0[2])
+        v0 = int(I_point0[1] / I_point0[2])
 
-        u1 = I_point1[0] / I_point1[2]
-        v1 = I_point1[1] / I_point1[2]
+        u1 = int(I_point1[0] / I_point1[2])
+        v1 = int(I_point1[1] / I_point1[2])
 
-        cv.line(self.camera_image, (u0, v0), (u1, v1), (255,0,0), 1)
+        cv.line(self.camera_image, (u0, v0), (u1, v1), (0, 0, 0), 1)
+
+    def draw_cube_lines(self, cube_points) -> None:
+        edge_pairs = [
+            (0, 1), (1, 2), (2, 3), (3, 0),  # Bottom face
+            (4, 5), (5, 6), (6, 7), (7, 4),  # Top face
+            (0, 4), (1, 5), (2, 6), (3, 7)   # Vertical edges
+        ]
+
+        for start, end in edge_pairs:
+            C_point0 = cube_points[start]
+            C_point1 = cube_points[end]
+            self.draw_camera_image_line(C_point0, C_point1)
+
+
+    def fill_cube_faces(self, cube_points: List[np.array], color) -> None:
+        # Define the vertex indices for each face of the cube
+        face_vertex_indices = [
+            [0, 1, 2, 3],  # Bottom face
+            [4, 5, 6, 7],  # Top face
+            [0, 1, 5, 4],  # Front face
+            [2, 3, 7, 6],  # Back face
+            [0, 3, 7, 4],  # Left face
+            [1, 2, 6, 5]   # Right face
+        ]
+
+        for face_indices in face_vertex_indices:
+            # Extract the 3D points for the current face
+            face_points = [cube_points[i] for i in face_indices]
+
+            I_points = []
+
+            for C_point in face_points:
+                I_point = self.I_T_C @ C_point
+                
+                u0 = int(I_point[0] / I_point[2])
+                v0 = int(I_point[1] / I_point[2])
+
+                I_points.append((u0, v0))
+            
+            Poly_Points = np.array(I_points)
+
+            cv.fillPoly(self.camera_image, [Poly_Points], color)
 
     def reset_camera_image(self) -> None:
         self.camera_image.fill(255)
