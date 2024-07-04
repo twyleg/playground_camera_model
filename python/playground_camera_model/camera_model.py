@@ -32,7 +32,7 @@ class CameraModel:
             [0,             0,              1,  0],
         ])
 
-        self.I_T_C = matrix_k @ matrix_c
+        self.I_T_C = np.matmul(matrix_k, matrix_c)
 
     def draw_camera_image_point(self, C_point: np.array) -> None:
         I_point = np.matmul(self.I_T_C, C_point)
@@ -46,8 +46,8 @@ class CameraModel:
 
 
     def draw_camera_image_line(self, C_point0: np.array, C_point1: np.array) -> None:
-        I_point0 = self.I_T_C @ C_point0
-        I_point1 = self.I_T_C @ C_point1
+        I_point0 = np.matmul(self.I_T_C, C_point0)
+        I_point1 = np.matmul(self.I_T_C, C_point1)
 
         u0 = int(I_point0[0] / I_point0[2])
         v0 = int(I_point0[1] / I_point0[2])
@@ -88,7 +88,7 @@ class CameraModel:
             I_points = []
 
             for C_point in face_points:
-                I_point = self.I_T_C @ C_point
+                I_point = np.matmul(self.I_T_C, C_point)
                 
                 u0 = int(I_point[0] / I_point[2])
                 v0 = int(I_point[1] / I_point[2])
