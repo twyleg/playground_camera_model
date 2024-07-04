@@ -4,11 +4,6 @@ from math import cos, sin, pi
 
 class Matrix_Functions:
 
-    @staticmethod
-    def DEG_TO_RAD(deg: float) -> float:
-        return deg*(pi/180.0)
-    
-
     def create_homogeneous_transformation_matrix(translation_x: float, translation_y: float, translation_z: float,
                                                 rotation_roll: float, rotation_pitch: float, rotation_yaw: float, scale: int) -> np.array:
 
@@ -56,30 +51,3 @@ class Matrix_Functions:
                                                           np.matmul(rotation_matrix_pitch,
                                                                     rotation_matrix_roll))))
         return transformation_matrix
-    
-    @classmethod
-    def homogeneous_transformation(cls, window):
-        V_T_C = cls.create_homogeneous_transformation_matrix(
-            (window.get_camera_system_translation_x() - 10000) / 1000.0,
-            (window.get_camera_system_translation_y() - 10000) / 1000.0,
-            (window.get_camera_system_translation_z() - 10000) / 1000.0,
-            cls.DEG_TO_RAD(window.get_camera_system_rotation_roll() / 10.0),
-            cls.DEG_TO_RAD(window.get_camera_system_rotation_pitch() / 10.0),
-            cls.DEG_TO_RAD(window.get_camera_system_rotation_yaw() / 10.0),
-            1
-        )
-
-
-        C_T_V = np.linalg.inv(V_T_C)
-
-        V_T_Cube = cls.create_homogeneous_transformation_matrix(
-            (window.get_cube_system_translation_x() - 10000) / 1000.0,
-            (window.get_cube_system_translation_y() - 10000) / 1000.0,
-            (window.get_cube_system_translation_z() - 10000) / 1000.0,
-            cls.DEG_TO_RAD(window.get_cube_system_rotation_roll() / 10.0),
-            cls.DEG_TO_RAD(window.get_cube_system_rotation_pitch() / 10.0),
-            cls.DEG_TO_RAD(window.get_cube_system_rotation_yaw() / 10.0),
-            window.get_cube_system_scale()
-        )
-
-        return V_T_C, C_T_V, V_T_Cube

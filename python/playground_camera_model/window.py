@@ -27,12 +27,9 @@ class Window:
     
     def window_creator(self):
         # Create gui
-        cv.namedWindow("image window", cv.WINDOW_GUI_NORMAL)
-        cv.namedWindow("camera settings", cv.WINDOW_NORMAL)
-        cv.namedWindow("cube settings", cv.WINDOW_NORMAL)
-        cv.resizeWindow("camera settings", 400, 300)
-        cv.resizeWindow("cube settings", 400, 300)
-
+        cv.namedWindow("image window", cv.WINDOW_AUTOSIZE)
+        cv.namedWindow("camera settings", cv.WINDOW_AUTOSIZE)
+        cv.namedWindow("cube settings", cv.WINDOW_AUTOSIZE)
 
         cv.createTrackbar("X", "camera settings", 0, 20000, self.nothing)
         cv.createTrackbar("Y", "camera settings", 0, 20000, self.nothing)
@@ -49,15 +46,15 @@ class Window:
         cv.createTrackbar("Yaw", "cube settings", 0, 3600, self.nothing)
         cv.createTrackbar("Scale", "cube settings", 1, 10, self.nothing)
 
-        self.camera_system_translation_x = cv.setTrackbarPos("X", "camera settings", 0)
-        self.camera_system_translation_y = cv.setTrackbarPos("Y", "camera settings", 12000)
-        self.camera_system_translation_z = cv.setTrackbarPos("Z", "camera settings", 13500)
-        self.camera_system_rotation_roll = cv.setTrackbarPos("Roll", "camera settings", 2750)
+        self.camera_system_translation_x = cv.setTrackbarPos("X", "camera settings", 10000)
+        self.camera_system_translation_y = cv.setTrackbarPos("Y", "camera settings", 10000)
+        self.camera_system_translation_z = cv.setTrackbarPos("Z", "camera settings", 11000)
+        self.camera_system_rotation_roll = cv.setTrackbarPos("Roll", "camera settings", 2700)
         self.camera_system_rotation_pitch = cv.setTrackbarPos("Pitch", "camera settings", 0)
-        self.camera_system_rotation_yaw = cv.setTrackbarPos("Yaw", "camera settings", 2550)
+        self.camera_system_rotation_yaw = cv.setTrackbarPos("Yaw", "camera settings", 2700)
 
-        self.cube_system_translation_x = cv.setTrackbarPos("X", "cube settings", 20000)
-        self.cube_system_translation_y = cv.setTrackbarPos("Y", "cube settings", 6000)
+        self.cube_system_translation_x = cv.setTrackbarPos("X", "cube settings", 14000)
+        self.cube_system_translation_y = cv.setTrackbarPos("Y", "cube settings", 10000)
         self.cube_system_translation_z = cv.setTrackbarPos("Z", "cube settings", 11000)
         self.cube_system_rotation_roll = cv.setTrackbarPos("Roll", "cube settings", 0)
         self.cube_system_rotation_pitch = cv.setTrackbarPos("Pitch", "cube settings", 0)
