@@ -29,6 +29,8 @@ class Engine:
         self.V_T_Cube = None
 
         self.cube_list = []
+        self.cube_points = []
+
 
     def fps_setter(self):
         #Calculate FPS
@@ -42,28 +44,44 @@ class Engine:
         self.cube_list = []
 
         #self.cube_list.extend(Structure_Generator.ground(width=10, height=1, depth=10, size=1, start_x=0, start_y=0, start_z=0))
-        cub1 = Cube(size=1, pos_x=0, pos_y=0, pos_z=0)
-        self.cube_list.append(cub1)
+        cub = Cube(size=1, pos_x=0, pos_y=0, pos_z=0)
+        cub.set_face_colors("all", Color.RandomColor())
+        self.cube_list.append(cub)
+        # cub = Cube(size=1, pos_x=2, pos_y=0, pos_z=0.5)
+        # cub.set_face_colors("all", Color.RandomColor())
+        # self.cube_list.append(cub)
+        # cub = Cube(size=1, pos_x=4, pos_y=0, pos_z=1)
+        # cub.set_face_colors("all", Color.RandomColor())
+        # self.cube_list.append(cub)
+
 
         while True:
 
             self.V_T_C, self.C_T_V, self.V_T_Cube = Matrix_Functions.homogeneous_transformation(self.window)
             self.camera_model.reset_camera_image()
+            face_points_front = []
 
-            for cube in self.cube_list:
-
-                cube_points = cube.cube_drawer(self.C_T_V, self.V_T_Cube)
-
-                clippend_points = self.clipping_space.cube_in_space(cube_points)
-
-                #RenderFaces.generate_center_points(cube, cube_points)
+            for cube in self.cube_list: 
                 
-                #self.camera_model.draw_camera_image_point(clippend_points)
-                self.camera_model.draw_all_cube_points(clippend_points)
-                self.camera_model.draw_cube_lines(clippend_points)
-                #self.camera_model.fill_cube_faces(cube_points, Color.BURLYWOOD)
+                #fit cube points to view
+                self.cube_points = cube.cube_drawer(self.C_T_V, self.V_T_Cube)
+                face_points_front.append(RenderFaces.generate_center_points(cube, self.cube_points)) 
 
-            #self.fps_setter()
+            sorted_cube_list = RenderFaces.set_render_order(self.cube_list, face_points_front)
+
+            for cube in sorted_cube_list:
+
+                #if self.clipping_space.cube_in_space(cube.cube_points_transform):
+                    ndc_points = self.clipping_space.cube_in_space(cube.cube_points_transform)
+                    print(len(ndc_points))
+                    for ndc_point in ndc_points:
+                        self.camera_model.draw_camera_image_point(ndc_point)
+
+                    # self.camera_model.draw_all_cube_points(cube.cube_points_transform)
+                    # self.camera_model.fill_cube_faces(cube, cube.cube_points_transform)
+                    # self.camera_model.draw_cube_lines(cube.cube_points_transform)
+
+            self.fps_setter()
             self.window.window_show(self.camera_model)
 
 
