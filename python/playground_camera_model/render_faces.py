@@ -3,7 +3,7 @@ import numpy as np
 class RenderFaces:
 
     @staticmethod
-    def generate_center_points(cube_points) -> None:
+    def generate_center_points(cube, cube_points) -> None:
         # Define the vertex indices for each face of the cube
         face_vertex_indices = [
             [0, 1, 2, 3],  # Top face
@@ -26,5 +26,4 @@ class RenderFaces:
 
             face_points_center.append(cen_point)
 
-
-        return face_points_center
+        cube.set_face_points(face_points_center)
