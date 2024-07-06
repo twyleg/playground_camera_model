@@ -12,7 +12,7 @@ class Clipping_Space:
 
     def create_perspective_projection_matrix(self, fov, aspect_ratio, near, far):
         
-        f = 1.0 / np.tan(fov / 2) #0.004
+        f = #1.0 / np.tan(fov / 2) #0.004
         nf = 1 / (near - far)
         
         return np.array([
