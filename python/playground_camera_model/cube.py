@@ -15,7 +15,6 @@ class Cube:
 
         self.generate_vertices(size)
         self.set_position(pos_x, pos_y, pos_z)
-        self.render_faces : list = [0,0,0,0,0,0] #top, bottom, front, back, left, right
 
     def generate_vertices(self, size):
         #Creates vertices of the cube
@@ -58,19 +57,5 @@ class Cube:
 
         return cube_points_transform
     
-    #faces to render
-    def set_render_faces(self, top, bottom, front, back, left, right):
-        self.render_faces = [top, bottom, front, back, left, right]
-
-    #center points of faces
-    def set_face_points(self, Cen_cubeP0, Cen_cubeP1, Cen_cubeP2, Cen_cubeP3, Cen_cubeP4, Cen_cubeP5, Cen_cubeP6, Cen_cubeP7):
-        self.face_points = [Cen_cubeP0, Cen_cubeP1, Cen_cubeP2, Cen_cubeP3, Cen_cubeP4, Cen_cubeP5, Cen_cubeP6, Cen_cubeP7]
-
-    def get_face_points(self):
-        return self.face_points
-    
     def get_points(self):
         return self.cube_points
-    
-    def get_render_faces(self):
-        return self.render_faces

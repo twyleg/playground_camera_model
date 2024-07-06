@@ -9,7 +9,6 @@ from playground_camera_model.window import Window
 from playground_camera_model.cube import Cube
 from playground_camera_model.structure import Structure_Generator
 from playground_camera_model.color import Color
-from playground_camera_model.render_faces import RenderFaces
 
 
 class Engine:
@@ -54,11 +53,13 @@ class Engine:
 
         self.cube_list = []
 
-        self.cube_list.extend(Structure_Generator.ground(width=5, height=1, depth=5, size=1, start_x=0, start_y=0, start_z=0))
-        #cub1 = Cube(size=1, pos_x=0, pos_y=0, pos_z=0)
+        self.cube_list.extend(Structure_Generator.ground(width=10, height=1, depth=10, size=1, start_x=0, start_y=0, start_z=0))
+        #self.cube_list.extend(Structure_Generator.tree(width=5, height=1, depth=5, size=1, start_x=0, start_y=0, start_z=1))
+        #cub1 = Cube(size=1, pos_x=0, pos_y=0, pos_z=2)
         #self.cube_list.append(cub1)
 
         while True:
+
 
             self.V_T_C, self.C_T_V, self.V_T_Cube = Matrix_Functions.homogeneous_transformation(self.window)
             self.camera_model.reset_camera_image()
@@ -66,19 +67,9 @@ class Engine:
             for cube in self.cube_list:
 
                 cube_points = cube.cube_drawer(self.C_T_V, self.V_T_Cube)
-
-                face_points_center = RenderFaces.generate_center_points(cube_points)
-
-                # self.camera_model.draw_camera_image_point(face_points_center[0])
-                # self.camera_model.draw_camera_image_point(face_points_center[1])
-                # self.camera_model.draw_camera_image_point(face_points_center[2])
-                # self.camera_model.draw_camera_image_point(face_points_center[3])
-                # self.camera_model.draw_camera_image_point(face_points_center[4])
-                # self.camera_model.draw_camera_image_point(face_points_center[5])
-                
                 self.camera_model.draw_all_cube_points(cube_points)
-                self.camera_model.draw_cube_lines(cube_points)
-                #self.camera_model.fill_cube_faces(cube_points, Color.BURLYWOOD)
+                self.camera_model.fill_cube_faces(cube_points, Color.BURLYWOOD)
+                #self.camera_model.draw_cube_lines(cube_points)
 
             self.fps_setter()
             self.window.window_show(self.camera_model)
