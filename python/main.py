@@ -6,7 +6,6 @@ import time
 from playground_camera_model.camera_model import CameraModel
 from playground_camera_model.matrix_functions import Matrix_Functions
 from playground_camera_model.window import Window
-#from playground_camera_model.cube import Cube
 
 
 
@@ -44,9 +43,10 @@ class Engine:
 
     def main(self):
 
-
-        #cube1 = Cube.cube_creator(width, heigt, pos_x, pos_y, pos_z)
-
+        W_T_V = Matrix_Functions.create_homogeneous_transformation_matrix(0, 0, 0, 0, 0, 0)
+        V_T_C = Matrix_Functions.create_homogeneous_transformation_matrix(0, 0, 0, 0, 0, 0)
+        C_T_V = np.linalg.inv(V_T_C)
+        V_T_Cube = Matrix_Functions.create_homogeneous_transformation_matrix(2, 0, 1, 0, 0, 0)
 
         # Init points of cube
         Cube_cubeP0 = self.create_point(-1, 1, -1)
@@ -69,8 +69,7 @@ class Engine:
                 (self.window.get_camera_system_translation_z() - 10000) / 1000.0,
                 self.DEG_TO_RAD(self.window.get_camera_system_rotation_roll() / 10.0),
                 self.DEG_TO_RAD(self.window.get_camera_system_rotation_pitch() / 10.0),
-                self.DEG_TO_RAD(self.window.get_camera_system_rotation_yaw() / 10.0),
-                1
+                self.DEG_TO_RAD(self.window.get_camera_system_rotation_yaw() / 10.0)
             )
 
             C_T_V = np.linalg.inv(V_T_C)
@@ -81,8 +80,7 @@ class Engine:
                 (self.window.get_cube_system_translation_z() - 10000) / 1000.0,
                 self.DEG_TO_RAD(self.window.get_cube_system_rotation_roll() / 10.0),
                 self.DEG_TO_RAD(self.window.get_cube_system_rotation_pitch() / 10.0),
-                self.DEG_TO_RAD(self.window.get_cube_system_rotation_yaw() / 10.0),
-                self.window.get_cube_system_scale()
+                self.DEG_TO_RAD(self.window.get_cube_system_rotation_yaw() / 10.0)
             )
 
             # Transform and draw cube points and lines on image
@@ -128,6 +126,7 @@ class Engine:
 
             self.camera_model.fill_poly([C_cubeP0, C_cubeP1, C_cubeP2])
 
+            
             self.fps_setter()
             self.window.window_show(self.camera_model)
 

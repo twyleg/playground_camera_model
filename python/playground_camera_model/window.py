@@ -18,8 +18,6 @@ class Window:
         self.cube_system_rotation_pitch = 0
         self.cube_system_rotation_yaw = 0
 
-        self.cube_system_scale = 0
-
         self.camera_window_name = "camera settings"
         self.cube_window_name = "cube settings"
 
@@ -44,7 +42,6 @@ class Window:
         cv.createTrackbar("Roll", "cube settings", 0, 3600, self.nothing)
         cv.createTrackbar("Pitch", "cube settings", 0, 3600, self.nothing)
         cv.createTrackbar("Yaw", "cube settings", 0, 3600, self.nothing)
-        cv.createTrackbar("Scale", "cube settings", 1, 10, self.nothing)
 
         self.camera_system_translation_x = cv.setTrackbarPos("X", "camera settings", 10000)
         self.camera_system_translation_y = cv.setTrackbarPos("Y", "camera settings", 10000)
@@ -59,7 +56,6 @@ class Window:
         self.cube_system_rotation_roll = cv.setTrackbarPos("Roll", "cube settings", 0)
         self.cube_system_rotation_pitch = cv.setTrackbarPos("Pitch", "cube settings", 0)
         self.cube_system_rotation_yaw = cv.setTrackbarPos("Yaw", "cube settings", 0)
-        self.cube_system_scale = cv.setTrackbarPos("Scale", "cube settings", 1)
 
 
     def window_show(self, class_cam):
@@ -101,9 +97,6 @@ class Window:
 
     def get_cube_system_rotation_yaw(self):
         return cv.getTrackbarPos("Yaw", self.cube_window_name)
-    
-    def get_cube_system_scale(self):
-        return cv.getTrackbarPos("Scale", self.cube_window_name)
 
     @staticmethod
     def nothing(x):
