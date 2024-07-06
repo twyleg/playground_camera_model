@@ -1,3 +1,4 @@
+# Copyright (C) 2024 twyleg
 import numpy as np
 import cv2 as cv
 from typing import List
@@ -55,9 +56,7 @@ class CameraModel:
 
         cv.line(self.camera_image, (u0, v0), (u1, v1), (255,0,0), 1)
 
-
     def fill_poly(self, C_points: List[np.array]) -> None:
-
         I_points = []
 
         for C_point in C_points:
@@ -67,15 +66,10 @@ class CameraModel:
             v0 = int(I_point[1] / I_point[2])
 
             I_points.append((u0, v0))
-        
 
-        Poly_Points = np.array(I_points)
+        poly_points = np.array(I_points)
 
-        # for I_point in I_points:
-        #     Poly_Points.append([I_point[0],I_point[1]])
-
-        cv.fillPoly(self.camera_image, [Poly_Points], (255,0,0))
-
+        cv.fillPoly(self.camera_image, [poly_points], (255,0,0))
 
     def reset_camera_image(self) -> None:
         self.camera_image.fill(255)

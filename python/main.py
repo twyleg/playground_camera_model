@@ -1,9 +1,11 @@
+# Copyright (C) 2024 twyleg
 import numpy as np
 import cv2 as cv
 from math import cos, sin, pi
-import time
 
-from playground_camera_model.camera_model import CameraModel
+from utils.camera_model import CameraModel
+from utils.fps_counter import FpsCounter
+
 
 def create_homogeneous_transformation_matrix(translation_x: float, translation_y: float, translation_z: float,
                                              rotation_roll: float, rotation_pitch: float, rotation_yaw: float) -> np.array:
@@ -53,11 +55,9 @@ def DEG_TO_RAD(deg: float) -> float:
 
 
 if __name__ == "__main__":
-    print("Started")
+    print("playground_camera_model started!")
 
     camera_model = CameraModel(0.00452, 0.00254, 0.004, 1280, 720, 1280/2, 720/2)
-
-    print(camera_model.I_T_C)
 
     W_T_V = create_homogeneous_transformation_matrix(0, 0, 0, 0, 0, 0)
     V_T_C = create_homogeneous_transformation_matrix(0, 0, 0, 0, 0, 0)
@@ -98,24 +98,25 @@ if __name__ == "__main__":
     cv.createTrackbar("Pitch", "cube settings", 0, 3600, nothing)
     cv.createTrackbar("Yaw", "cube settings", 0, 3600, nothing)
 
-    camera_system_translation_x = cv.setTrackbarPos("X", "camera settings", 10000)
-    camera_system_translation_y = cv.setTrackbarPos("Y", "camera settings", 10000)
-    camera_system_translation_z = cv.setTrackbarPos("Z", "camera settings", 11000)
-    camera_system_rotation_roll = cv.setTrackbarPos("Roll", "camera settings", 2700)
-    camera_system_rotation_pitch = cv.setTrackbarPos("Pitch", "camera settings", 0)
-    camera_system_rotation_yaw = cv.setTrackbarPos("Yaw", "camera settings", 2700)
+    cv.setTrackbarPos("X", "camera settings", 10000)
+    cv.setTrackbarPos("Y", "camera settings", 10000)
+    cv.setTrackbarPos("Z", "camera settings", 11000)
+    cv.setTrackbarPos("Roll", "camera settings", 2700)
+    cv.setTrackbarPos("Pitch", "camera settings", 0)
+    cv.setTrackbarPos("Yaw", "camera settings", 2700)
 
-    cube_system_translation_x = cv.setTrackbarPos("X", "cube settings", 14000)
-    cube_system_translation_y = cv.setTrackbarPos("Y", "cube settings", 10000)
-    cube_system_translation_z = cv.setTrackbarPos("Z", "cube settings", 11000)
-    cube_system_rotation_roll = cv.setTrackbarPos("Roll", "cube settings", 0)
-    cube_system_rotation_pitch = cv.setTrackbarPos("Pitch", "cube settings", 0)
-    cube_system_rotation_yaw = cv.setTrackbarPos("Yaw", "cube settings", 0)
+    cv.setTrackbarPos("X", "cube settings", 14000)
+    cv.setTrackbarPos("Y", "cube settings", 10000)
+    cv.setTrackbarPos("Z", "cube settings", 11000)
+    cv.setTrackbarPos("Roll", "cube settings", 0)
+    cv.setTrackbarPos("Pitch", "cube settings", 0)
+    cv.setTrackbarPos("Yaw", "cube settings", 0)
 
-    start_time = time.time()
-    frame_count = 0
+    fps_counter = FpsCounter(60)
 
     while True:
+        fps_counter.update()
+
         camera_system_translation_x = cv.getTrackbarPos("X", "camera settings")
         camera_system_translation_y = cv.getTrackbarPos("Y", "camera settings")
         camera_system_translation_z = cv.getTrackbarPos("Z", "camera settings")
@@ -191,18 +192,11 @@ if __name__ == "__main__":
         camera_model.draw_camera_image_line(C_cubeP2, C_cubeP6)
         camera_model.draw_camera_image_line(C_cubeP3, C_cubeP7)
 
+        camera_model.fill_poly([C_cubeP0, C_cubeP1, C_cubeP2, C_cubeP3])
 
-        camera_model.fill_poly([C_cubeP0, C_cubeP1, C_cubeP2])
-
-        #Calculate FPS
-        frame_count += 1
-        elapsed_time = time.time() - start_time
-        fps = frame_count / elapsed_time
-
-
+        fps = fps_counter.get_fps_filtered()
         cv.putText(camera_model.camera_image, f"FPS: {fps:.0f}", (10, 30), cv.FONT_HERSHEY_PLAIN, 1.2, (0, 255, 0), 1)
-        cv.imshow("image window", camera_model.camera_image)
 
-        # Wait for a short while
+        cv.imshow("image window", camera_model.camera_image)
         cv.waitKey(10)
 
