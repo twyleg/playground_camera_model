@@ -1,5 +1,3 @@
-import random
-
 class Color:
     ALICE_BLUE = (255, 248, 240)
     ANTIQUE_WHITE = (215, 235, 250)
@@ -141,9 +139,3 @@ class Color:
     WHITE_SMOKE = (245, 245, 245)
     YELLOW = (0, 255, 255)
     YELLOW_GREEN = (50, 205, 154)
-
-    @classmethod
-    def RandomColor(cls):
-        color_names = [attr for attr in dir(cls) if not callable(getattr(cls, attr))]
-        random_color_name = random.choice(color_names)
-        return getattr(cls, random_color_name)

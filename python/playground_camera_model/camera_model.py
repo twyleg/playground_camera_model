@@ -83,7 +83,7 @@ class CameraModel:
             self.draw_camera_image_line(C_point0, C_point1)
 
 
-    def fill_cube_faces(self, cube, cube_points: List[np.array]) -> None:
+    def fill_cube_faces(self, cube_points: List[np.array], color) -> None:
         # Define the vertex indices for each face of the cube
         face_vertex_indices = [
             [0, 1, 2, 3],  # Bottom face
@@ -94,7 +94,7 @@ class CameraModel:
             [1, 2, 6, 5]   # Right face
         ]
 
-        for pos, face_indices in enumerate(face_vertex_indices):
+        for face_indices in face_vertex_indices:
             # Extract the 3D points for the current face
             face_points = [cube_points[i] for i in face_indices]
 
@@ -110,7 +110,7 @@ class CameraModel:
             
             Poly_Points = np.array(I_points)
 
-            cv.fillPoly(self.camera_image, [Poly_Points], cube.get_face_color(pos))
+            cv.fillPoly(self.camera_image, [Poly_Points], color)
 
     def reset_camera_image(self) -> None:
         self.camera_image.fill(255)

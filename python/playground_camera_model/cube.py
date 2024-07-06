@@ -17,19 +17,9 @@ class Cube:
         self.set_position(pos_x, pos_y, pos_z)
         self.render_faces : list = [0,0,0,0,0,0] #top, bottom, front, back, left, right
 
-        self.face_colors = {
-            'top': None,
-            'bottom': None,
-            'front': None,
-            'back': None,
-            'left': None,
-            'right': None
-        }
-
-        self.face_color_indices = ['top', 'bottom', 'front', 'back', 'left', 'right']
-
     def generate_vertices(self, size):
         #Creates vertices of the cube
+        # Vertices are defined relative to the center of the cube
         self.Cube_cubeP0 = self.create_point(-size, size, -size)
         self.Cube_cubeP1 = self.create_point(-size, -size, -size)
         self.Cube_cubeP2 = self.create_point(size, -size, -size)
@@ -60,13 +50,13 @@ class Cube:
             self.cube_points[pos] = translated_vec
 
     def cube_drawer(self, C_T_V, V_T_Cube):
-        self.cube_points_transform = []
+        cube_points_transform = []
 
         for point in self.cube_points:
             cubeP = np.matmul(C_T_V , np.matmul(V_T_Cube, point))
-            self.cube_points_transform.append(cubeP)
+            cube_points_transform.append(cubeP)
 
-        return self.cube_points_transform
+        return cube_points_transform
     
     #faces to render
     def set_render_faces(self, top, bottom, front, back, left, right):
@@ -76,22 +66,6 @@ class Cube:
     def set_face_points(self, face_points):
         self.face_points = face_points
 
-    def set_face_colors(self, mode, top=None, bottom=None, front=None, back=None, left=None, right=None):
-        """use mode "all" for one color, mode "individual" for multiple color faces"""
-        if mode == 'all':
-            color = top
-            for face in self.face_color_indices:
-                self.face_colors[face] = color
-        elif mode == 'individual':
-            self.face_colors['top'] = top
-            self.face_colors['bottom'] = bottom
-            self.face_colors['front'] = front
-            self.face_colors['back'] = back
-            self.face_colors['left'] = left
-            self.face_colors['right'] = right
-        else:
-            raise ValueError("Invalid mode. Use 'all' to set all faces to one color or 'individual' to set each face a different color.")
-
     def get_face_points(self):
         return self.face_points
     
@@ -100,10 +74,3 @@ class Cube:
     
     def get_render_faces(self):
         return self.render_faces
-    
-    def get_face_color(self, index):
-        if 0 <= index < len(self.face_color_indices):
-            face = self.face_color_indices[index]
-            return self.face_colors[face]
-        else:
-            raise IndexError("Index out of range. Valid indices are 0 to 5.")

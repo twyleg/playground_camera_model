@@ -4,7 +4,7 @@ class Clipping_Space:
     def __init__(self) -> None:
         
         # Create a projection matrix
-        fov = np.deg2rad(64/1.77)  # Field of view in radians
+        fov = np.deg2rad(58)  # Field of view in radians
         aspect_ratio = 1.77  # Screen width / height
         near = 1.0
         far = 100.0
@@ -12,7 +12,7 @@ class Clipping_Space:
 
     def create_perspective_projection_matrix(self, fov, aspect_ratio, near, far):
         
-        f = 0.004#1.0 / np.tan(fov / 2) = 103
+        f = 1.0 / np.tan(fov / 2)
         nf = 1 / (near - far)
         
         return np.array([
@@ -21,18 +21,13 @@ class Clipping_Space:
             [0, 0, (far + near) * nf, (2 * far * near) * nf],
             [0, 0, -1, 0]
         ])
-    
-
 
     def cube_in_space(self, cube_points: list):
         points = []
         for point in cube_points:
             clip_space_point = np.matmul(self.projection_matrix, point)
+            # Perform perspective division
             ndc_point = clip_space_point / clip_space_point[3]
-            if -1 <= ndc_point[0] <= 1 and -1 <= ndc_point[1] <= 1 and 1 <= ndc_point[2] <= 100:
-                #return True
-                ndc_point = np.matmul(np.linalg.inv(self.projection_matrix), ndc_point)
-                points.append(ndc_point)
-        
-        #return False
+            points.append(ndc_point)
+            print(ndc_point)
         return points
