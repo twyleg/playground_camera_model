@@ -6,9 +6,8 @@ import time
 from playground_camera_model.camera_model import CameraModel
 from playground_camera_model.matrix_functions import Matrix_Functions
 from playground_camera_model.window import Window
-from playground_camera_model.cube import Cube
-from playground_camera_model.structure import Structure_Generator
-from playground_camera_model.color import Color
+#from playground_camera_model.cube import Cube
+
 
 
 class Engine:
@@ -21,12 +20,6 @@ class Engine:
         self.start_time = time.time()
         self.frame_count = 0
 
-        self.V_T_C = None
-        self.C_T_V = None
-        self.V_T_Cube = None
-
-        self.cube_list = []
-
     @staticmethod  
     def create_point(x: float, y: float, z: float) -> np.array:
         return np.array([
@@ -35,6 +28,11 @@ class Engine:
             [z],
             [1]
         ])
+
+    @staticmethod
+    def DEG_TO_RAD(deg: float) -> float:
+        return deg*(pi/180.0)
+    
 
     def fps_setter(self):
         #Calculate FPS
@@ -46,30 +44,89 @@ class Engine:
 
     def main(self):
 
-        self.W_T_V = Matrix_Functions.create_homogeneous_transformation_matrix(0, 0, 0, 0, 0, 0, 0)
-        self.V_T_C = Matrix_Functions.create_homogeneous_transformation_matrix(0, 0, 0, 0, 0, 0, 0)
-        self.C_T_V = np.linalg.inv(self.V_T_C)
-        self.V_T_Cube = Matrix_Functions.create_homogeneous_transformation_matrix(2, 0, 1, 0, 0, 0, 0)
 
-        self.cube_list = []
+        #cube1 = Cube.cube_creator(width, heigt, pos_x, pos_y, pos_z)
 
-        self.cube_list.extend(Structure_Generator.ground(width=10, height=1, depth=10, size=1, start_x=0, start_y=0, start_z=0))
-        #self.cube_list.extend(Structure_Generator.tree(width=5, height=1, depth=5, size=1, start_x=0, start_y=0, start_z=1))
-        #cub1 = Cube(size=1, pos_x=0, pos_y=0, pos_z=2)
-        #self.cube_list.append(cub1)
+
+        # Init points of cube
+        Cube_cubeP0 = self.create_point(-1, 1, -1)
+        Cube_cubeP1 = self.create_point(-1, -1, -1)
+        Cube_cubeP2 = self.create_point(1, -1, -1)
+        Cube_cubeP3 = self.create_point(1, 1, -1)
+
+        Cube_cubeP4 = self.create_point(-1, 1, 1)
+        Cube_cubeP5 = self.create_point(-1, -1, 1)
+        Cube_cubeP6 = self.create_point(1, -1, 1)
+        Cube_cubeP7 = self.create_point(1, 1, 1)
+
 
         while True:
 
+            # Update homogeneous transformation matrices
+            V_T_C = Matrix_Functions.create_homogeneous_transformation_matrix(
+                (self.window.get_camera_system_translation_x() - 10000) / 1000.0,
+                (self.window.get_camera_system_translation_y() - 10000) / 1000.0,
+                (self.window.get_camera_system_translation_z() - 10000) / 1000.0,
+                self.DEG_TO_RAD(self.window.get_camera_system_rotation_roll() / 10.0),
+                self.DEG_TO_RAD(self.window.get_camera_system_rotation_pitch() / 10.0),
+                self.DEG_TO_RAD(self.window.get_camera_system_rotation_yaw() / 10.0),
+                1
+            )
 
-            self.V_T_C, self.C_T_V, self.V_T_Cube = Matrix_Functions.homogeneous_transformation(self.window)
+            C_T_V = np.linalg.inv(V_T_C)
+
+            V_T_Cube = Matrix_Functions.create_homogeneous_transformation_matrix(
+                (self.window.get_cube_system_translation_x() - 10000) / 1000.0,
+                (self.window.get_cube_system_translation_y() - 10000) / 1000.0,
+                (self.window.get_cube_system_translation_z() - 10000) / 1000.0,
+                self.DEG_TO_RAD(self.window.get_cube_system_rotation_roll() / 10.0),
+                self.DEG_TO_RAD(self.window.get_cube_system_rotation_pitch() / 10.0),
+                self.DEG_TO_RAD(self.window.get_cube_system_rotation_yaw() / 10.0),
+                self.window.get_cube_system_scale()
+            )
+
+            # Transform and draw cube points and lines on image
+            C_cubeP0 = C_T_V @ V_T_Cube @ Cube_cubeP0
+            C_cubeP1 = C_T_V @ V_T_Cube @ Cube_cubeP1
+            C_cubeP2 = C_T_V @ V_T_Cube @ Cube_cubeP2
+            C_cubeP3 = C_T_V @ V_T_Cube @ Cube_cubeP3
+
+            C_cubeP4 = C_T_V @ V_T_Cube @ Cube_cubeP4
+            C_cubeP5 = C_T_V @ V_T_Cube @ Cube_cubeP5
+            C_cubeP6 = C_T_V @ V_T_Cube @ Cube_cubeP6
+            C_cubeP7 = C_T_V @ V_T_Cube @ Cube_cubeP7
+
             self.camera_model.reset_camera_image()
 
-            for cube in self.cube_list:
+            # Points
+            self.camera_model.draw_camera_image_point(C_cubeP0)
+            self.camera_model.draw_camera_image_point(C_cubeP1)
+            self.camera_model.draw_camera_image_point(C_cubeP2)
+            self.camera_model.draw_camera_image_point(C_cubeP3)
 
-                cube_points = cube.cube_drawer(self.C_T_V, self.V_T_Cube)
-                self.camera_model.draw_all_cube_points(cube_points)
-                self.camera_model.fill_cube_faces(cube_points, Color.BURLYWOOD)
-                #self.camera_model.draw_cube_lines(cube_points)
+            self.camera_model.draw_camera_image_point(C_cubeP4)
+            self.camera_model.draw_camera_image_point(C_cubeP5)
+            self.camera_model.draw_camera_image_point(C_cubeP6)
+            self.camera_model.draw_camera_image_point(C_cubeP7)
+
+            # Lines
+            self.camera_model.draw_camera_image_line(C_cubeP0, C_cubeP1)
+            self.camera_model.draw_camera_image_line(C_cubeP1, C_cubeP2)
+            self.camera_model.draw_camera_image_line(C_cubeP2, C_cubeP3)
+            self.camera_model.draw_camera_image_line(C_cubeP3, C_cubeP0)
+
+            self.camera_model.draw_camera_image_line(C_cubeP4, C_cubeP5)
+            self.camera_model.draw_camera_image_line(C_cubeP5, C_cubeP6)
+            self.camera_model.draw_camera_image_line(C_cubeP6, C_cubeP7)
+            self.camera_model.draw_camera_image_line(C_cubeP7, C_cubeP4)
+
+            self.camera_model.draw_camera_image_line(C_cubeP0, C_cubeP4)
+            self.camera_model.draw_camera_image_line(C_cubeP1, C_cubeP5)
+            self.camera_model.draw_camera_image_line(C_cubeP2, C_cubeP6)
+            self.camera_model.draw_camera_image_line(C_cubeP3, C_cubeP7)
+
+
+            self.camera_model.fill_poly([C_cubeP0, C_cubeP1, C_cubeP2])
 
             self.fps_setter()
             self.window.window_show(self.camera_model)
