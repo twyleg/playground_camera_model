@@ -59,17 +59,23 @@ class Engine:
         Cube_cubeP6 = self.create_point(1, -1, 1)
         Cube_cubeP7 = self.create_point(1, 1, 1)
 
+        c_roll = 270.0
+        c_pitch = 0.0
+        c_yaw = 270.0
 
         while True:
+
+            c_roll += self.window.ego_mouse_control.get_delta_pitch()
+            c_yaw += -self.window.ego_mouse_control.get_delta_yaw()
 
             # Update homogeneous transformation matrices
             V_T_C = Matrix_Functions.create_homogeneous_transformation_matrix(
                 (self.window.get_camera_system_translation_x() - 10000) / 1000.0,
                 (self.window.get_camera_system_translation_y() - 10000) / 1000.0,
                 (self.window.get_camera_system_translation_z() - 10000) / 1000.0,
-                self.DEG_TO_RAD(self.window.get_camera_system_rotation_roll() / 10.0),
-                self.DEG_TO_RAD(self.window.get_camera_system_rotation_pitch() / 10.0),
-                self.DEG_TO_RAD(self.window.get_camera_system_rotation_yaw() / 10.0),
+                self.DEG_TO_RAD(c_roll),
+                self.DEG_TO_RAD(c_pitch),
+                self.DEG_TO_RAD(c_yaw),
                 1
             )
 

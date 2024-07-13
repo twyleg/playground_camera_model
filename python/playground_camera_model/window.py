@@ -1,4 +1,46 @@
 import cv2 as cv
+from typing import Tuple
+
+class EgoMouseControl:
+
+    def __init__(self, pixel_per_deg: float = 1 / 0.25):
+        self.pixel_per_deg = pixel_per_deg
+        self.clicked = False
+        self.mouse_pos: Tuple[int, int] | None = None
+
+        self.delta_pitch = 0.0
+        self.delta_yaw = 0.0
+
+        cv.setMouseCallback("image window", self.mouse_callback)
+
+    def mouse_callback(self, action, x, y, flags, *userdata):
+
+        if action == 1:
+            self.clicked = True
+            self.mouse_pos = (x, y)
+        elif action == 4:
+            self.clicked = False
+            self.delta_pitch = 0.0
+            self.delta_yaw = 0.0
+
+        if self.clicked:
+            delta_x = x - self.mouse_pos[0]
+            delta_y = -(y - self.mouse_pos[1])
+            self.mouse_pos = (x, y)
+
+            self.delta_pitch = delta_y / self.pixel_per_deg
+            self.delta_yaw = delta_x / self.pixel_per_deg
+
+    def get_delta_pitch(self) -> float:
+        tmp = self.delta_pitch
+        self.delta_pitch = 0.0
+        return tmp
+
+    def get_delta_yaw(self) -> float:
+        tmp = self.delta_yaw
+        self.delta_yaw = 0.0
+        return tmp
+
 
 class Window:
 
@@ -60,6 +102,9 @@ class Window:
         self.cube_system_rotation_pitch = cv.setTrackbarPos("Pitch", "cube settings", 0)
         self.cube_system_rotation_yaw = cv.setTrackbarPos("Yaw", "cube settings", 0)
         self.cube_system_scale = cv.setTrackbarPos("Scale", "cube settings", 1)
+
+        self.ego_mouse_control = EgoMouseControl()
+
 
 
     def window_show(self, class_cam):
