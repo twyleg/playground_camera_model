@@ -1,8 +1,14 @@
-name: Unit Tests
-run-name: unit_tests
-on: [push]
+name: tests
+run-name: tests
+on:
+  workflow_call:
+
+  push:
+    branches:
+      - "**"
+
 jobs:
-  run-unit_tests:
+  build_test_cpp:
     runs-on: ubuntu-latest
     steps:
     - name: 'Checkout repository'
@@ -13,17 +19,14 @@ jobs:
       run: |
         sudo apt update
         sudo apt install cmake \
-        	g++ \
-        	libfmt-dev \
-        	libboost-all-dev \
+          g++ \
+          libfmt-dev \
+          libboost-all-dev \
           libopencv-dev
     - name: 'Build'
       run: |
-        mkdir build/
-        cd build/
+        mkdir -p cpp/build/
+        cd cpp/build/
         cmake ..
         make -j3
-    - name: 'Run tests'
-      run: |
-        cd build/unit_tests/
-        ./unit_tests
+
