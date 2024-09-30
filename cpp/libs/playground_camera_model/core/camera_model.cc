@@ -3,19 +3,20 @@
 
 namespace playground_camera_model {
 
-CameraModel::CameraModel(double sensorWidth, double sensorHeight, double focalLength, uint32_t resolutionX, uint32_t resolutionY, uint32_t u0, uint32_t v0){
 
-	this->sensorWidth = sensorWidth;
-	this->sensorHeight = sensorHeight;
-	this->focalLength = focalLength;
-	this->resolutionX = resolutionX;
-	this->resolutionY = resolutionY;
-	this->u0 = u0;
-	this->v0 = v0;
+CameraModel::CameraModel(double sensorWidth, double sensorHeight, double focalLength, uint32_t resolutionX, uint32_t resolutionY, uint32_t u0, uint32_t v0)
+	: mSensorWidth(sensorWidth),
+	  mSensorHeight(sensorHeight),
+	  mFocalLength(focalLength),
+	  mResolutionX(resolutionX),
+	  mResolutionY(resolutionY),
+	  mU0(u0),
+	  mV0(v0)
+{
 
 	// Create camera image resolutionX * resolutionY with 3 Channels for RGB
-	cameraImage.create(resolutionY,resolutionX,CV_8UC3);
-	cameraImage = cv::Scalar(255,255,255);
+	mCameraImage.create(resolutionY,resolutionX,CV_8UC3);
+	mCameraImage = cv::Scalar(255,255,255);
 
 	// Create camera transformation matrix I_T_C
 	const double rhoWidth = sensorWidth / resolutionX;
@@ -38,24 +39,20 @@ CameraModel::CameraModel(double sensorWidth, double sensorHeight, double focalLe
 }
 
 
-void CameraModel::drawCameraImagePoint(const cv::Mat& C_point){
+void CameraModel::drawCameraImagePoint(const HTM::Point3d& C_point){
 
 	const cv::Mat I_point = I_T_C * C_point;
 
-//	std::cout << "I_point: " << I_point << std::endl;
-//	std::cout << (int)I_point.at<double>(0) << std::endl;
-//	std::cout << (int)I_point.at<double>(1) << std::endl;
-//	std::cout << (int)I_point.at<double>(2) << std::endl;
 	const int32_t u = I_point.at<double>(0) / I_point.at<double>(2);
 	const int32_t v = I_point.at<double>(1) / I_point.at<double>(2);
 
 	const cv::Point point(u,v);
 
-	cv::circle(cameraImage, point, 5, cv::Scalar(255,0,0), 2);
+	cv::circle(mCameraImage, point, 5, cv::Scalar(255,0,0), 2);
 
 }
 
-void CameraModel::drawCameraImageLine(const cv::Mat& C_point0, const cv::Mat& C_point1){
+void CameraModel::drawCameraImageLine(const HTM::Point3d& C_point0, const HTM::Point3d& C_point1){
 
 	const cv::Mat I_point0 = I_T_C * C_point0;
 	const cv::Mat I_point1 = I_T_C * C_point1;
@@ -69,17 +66,17 @@ void CameraModel::drawCameraImageLine(const cv::Mat& C_point0, const cv::Mat& C_
 	const cv::Point point0(u0,v0);
 	const cv::Point point1(u1,v1);
 
-	cv::line(cameraImage, point0, point1, cv::Scalar(255,0,0), 1);
+	cv::line(mCameraImage, point0, point1, cv::Scalar(255,0,0), 1);
 }
 
 void CameraModel::resetCameraImage(){
 
-	cameraImage = cv::Scalar(255,255,255);
+	mCameraImage = cv::Scalar(255,255,255);
 
 }
 
 cv::Mat& CameraModel::getCameraImage() {
-	return cameraImage;
+	return mCameraImage;
 }
 
 }
