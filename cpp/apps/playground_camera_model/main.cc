@@ -1,6 +1,5 @@
 // Copyright (C) 2024 twyleg
 #include <unistd.h>
-#include <iostream>
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui.hpp>
@@ -8,10 +7,11 @@
 #include <playground_camera_model/core/camera_model.h>
 #include <playground_camera_model/core/homogeneous_transformation_matrix.h>
 
-#define DEG_TO_RAD(x) (x*(M_PI/180.0))
-
-
 namespace HTM = playground_camera_model::homogeneous_transformation_matrix;
+
+double deg_to_rad(double deg){
+	return deg * (M_PI / 180.0);
+}
 
 int main(int argc, char** argv){
 
@@ -36,42 +36,42 @@ int main(int argc, char** argv){
 	playground_camera_model::CameraModel cameraModel(0.00452, 0.00288, 0.004, 640, 480, 320, 240);
 
 	// Init homogeneous transformation matrices
-	cv::Mat W_T_V 		= HTM::createHomogeneousTransformationMatrix(0,0,0, 0,0,0);
-	cv::Mat V_T_C 		= HTM::createHomogeneousTransformationMatrix(0,0,0, 0,0,0);
-	cv::Mat C_T_V 		= V_T_C.inv();
-	cv::Mat V_T_Cube 	= HTM::createHomogeneousTransformationMatrix(2,0,1, 0,0,0);
+	HTM::Matrix W_T_V 		= HTM::Matrix({0,0,0, 0,0,0});
+	HTM::Matrix V_T_C 		= HTM::Matrix({0,0,0, 0,0,0});
+	HTM::Matrix C_T_V 		= V_T_C.inv();
+	HTM::Matrix V_T_Cube 	= HTM::Matrix({2,0,1, 0,0,0});
 
 
 	// Init points of cube
-	cv::Mat Cube_cubeP0 = HTM::createPoint(-1, 1,-1);
-	cv::Mat Cube_cubeP1 = HTM::createPoint(-1,-1,-1);
-	cv::Mat Cube_cubeP2 = HTM::createPoint( 1,-1,-1);
-	cv::Mat Cube_cubeP3 = HTM::createPoint( 1, 1,-1);
+	HTM::Point3d Cube_cubeP0(-1, 1,-1);
+	HTM::Point3d Cube_cubeP1(-1,-1,-1);
+	HTM::Point3d Cube_cubeP2( 1,-1,-1);
+	HTM::Point3d Cube_cubeP3( 1, 1,-1);
 
-	cv::Mat Cube_cubeP4 = HTM::createPoint(-1, 1,1);
-	cv::Mat Cube_cubeP5 = HTM::createPoint(-1,-1,1);
-	cv::Mat Cube_cubeP6 = HTM::createPoint( 1,-1,1);
-	cv::Mat Cube_cubeP7 = HTM::createPoint( 1, 1,1);
+	HTM::Point3d Cube_cubeP4(-1, 1,1);
+	HTM::Point3d Cube_cubeP5(-1,-1,1);
+	HTM::Point3d Cube_cubeP6( 1,-1,1);
+	HTM::Point3d Cube_cubeP7( 1, 1,1);
 
-	cv::Mat V_cubeP0(4, 1, CV_64F);
-	cv::Mat V_cubeP1(4, 1, CV_64F);
-	cv::Mat V_cubeP2(4, 1, CV_64F);
-	cv::Mat V_cubeP3(4, 1, CV_64F);
+	HTM::Point3d V_cubeP0;
+	HTM::Point3d V_cubeP1;
+	HTM::Point3d V_cubeP2;
+	HTM::Point3d V_cubeP3;
 
-	cv::Mat V_cubeP4(4, 1, CV_64F);
-	cv::Mat V_cubeP5(4, 1, CV_64F);
-	cv::Mat V_cubeP6(4, 1, CV_64F);
-	cv::Mat V_cubeP7(4, 1, CV_64F);
+	HTM::Point3d V_cubeP4;
+	HTM::Point3d V_cubeP5;
+	HTM::Point3d V_cubeP6;
+	HTM::Point3d V_cubeP7;
 
-	cv::Mat C_cubeP0(4, 1, CV_64F);
-	cv::Mat C_cubeP1(4, 1, CV_64F);
-	cv::Mat C_cubeP2(4, 1, CV_64F);
-	cv::Mat C_cubeP3(4, 1, CV_64F);
+	HTM::Point3d C_cubeP0;
+	HTM::Point3d C_cubeP1;
+	HTM::Point3d C_cubeP2;
+	HTM::Point3d C_cubeP3;
 
-	cv::Mat C_cubeP4(4, 1, CV_64F);
-	cv::Mat C_cubeP5(4, 1, CV_64F);
-	cv::Mat C_cubeP6(4, 1, CV_64F);
-	cv::Mat C_cubeP7(4, 1, CV_64F);
+	HTM::Point3d C_cubeP4;
+	HTM::Point3d C_cubeP5;
+	HTM::Point3d C_cubeP6;
+	HTM::Point3d C_cubeP7;
 
 	// Create gui
 	cv::namedWindow("image window", cv::WINDOW_AUTOSIZE);
@@ -95,24 +95,28 @@ int main(int argc, char** argv){
 
 	while(true){
 
+		HTM::Matrix::Parameter vehicle_to_camera_parameter{
+			(cameraSystemTranslationX-10000)/1000.0,
+			(cameraSystemTranslationY-10000)/1000.0,
+			(cameraSystemTranslationZ-10000)/1000.0,
+			deg_to_rad(cameraSystemRotationRoll/10.0),
+			deg_to_rad(cameraSystemRotationPitch/10.0),
+			deg_to_rad(cameraSystemRotationYaw/10.0)
+		};
+
+		HTM::Matrix::Parameter vehicle_to_cube_parameter{
+			(cubeSystemTranslationX-10000)/1000.0,
+			(cubeSystemTranslationY-10000)/1000.0,
+			(cubeSystemTranslationZ-10000)/1000.0,
+			deg_to_rad(cubeSystemRotationRoll/10.0),
+			deg_to_rad(cubeSystemRotationPitch/10.0),
+			deg_to_rad(cubeSystemRotationYaw/10.0)
+		};
+
 		// Update homogeneous transformation matrices
-		V_T_C = HTM::createHomogeneousTransformationMatrix(
-				(cameraSystemTranslationX-10000)/1000.0,
-				(cameraSystemTranslationY-10000)/1000.0,
-				(cameraSystemTranslationZ-10000)/1000.0,
-				DEG_TO_RAD(cameraSystemRotationRoll/10.0),
-				DEG_TO_RAD(cameraSystemRotationPitch/10.0),
-				DEG_TO_RAD(cameraSystemRotationYaw/10.0));
-
+		V_T_C = HTM::Matrix(vehicle_to_camera_parameter);
 		C_T_V = V_T_C.inv();
-
-		V_T_Cube = HTM::createHomogeneousTransformationMatrix(
-				(cubeSystemTranslationX-10000)/1000.0,
-				(cubeSystemTranslationY-10000)/1000.0,
-				(cubeSystemTranslationZ-10000)/1000.0,
-				DEG_TO_RAD(cubeSystemRotationRoll/10.0),
-				DEG_TO_RAD(cubeSystemRotationPitch/10.0),
-				DEG_TO_RAD(cubeSystemRotationYaw/10.0));
+		V_T_Cube = HTM::Matrix(vehicle_to_cube_parameter);
 
 		// Transform and draw cube points and lines on image
 		C_cubeP0 = C_T_V * V_T_Cube * Cube_cubeP0;

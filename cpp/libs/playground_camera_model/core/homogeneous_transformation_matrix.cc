@@ -4,34 +4,29 @@
 
 namespace playground_camera_model::homogeneous_transformation_matrix {
 
+namespace {
 
-cv::Mat createHomogeneousTransformationMatrix(
-		double translationX,
-		double translationY,
-		double translationZ,
-		double rotationRoll,
-		double rotationPitch,
-		double rotationYaw){
+cv::Mat createHomogeneousTransformationMatrix(const Matrix::Parameter& p){
 
 
 	double rotationMatrixRollData[4*4] =  {	1,	0,					0,					0,
-											0,	cos(rotationRoll),	-sin(rotationRoll),	0,
-											0,	sin(rotationRoll),	cos(rotationRoll),	0,
+											0,	cos(p.rotRoll),		-sin(p.rotRoll),	0,
+											0,	sin(p.rotRoll),		cos(p.rotRoll),		0,
 											0,	0,					0,					1};
 
-	double rotationMatrixPitchData[4*4] =  {cos(rotationPitch),	0,	sin(rotationPitch),	0,
+	double rotationMatrixPitchData[4*4] = {	cos(p.rotPitch),	0,	sin(p.rotPitch),	0,
 											0,					1,	0,					0,
-											-sin(rotationPitch),0,	cos(rotationPitch),	0,
+											-sin(p.rotPitch),	0,	cos(p.rotPitch),	0,
 											0,					0,	0,					1};
 
-	double rotationMatrixYawData[4*4] =  {	cos(rotationYaw),	-sin(rotationYaw),	0,	0,
-											sin(rotationYaw),	cos(rotationYaw),	0,	0,
+	double rotationMatrixYawData[4*4] =  {	cos(p.rotYaw),		-sin(p.rotYaw),		0,	0,
+											sin(p.rotYaw),		cos(p.rotYaw),		0,	0,
 											0,					0,					1,	0,
 											0,					0,					0,	1};
 
-	double translationMatrixData[4*4] =  {	1,	0,	0,	translationX,
-											0,	1,	0,	translationY,
-											0,	0,	1,	translationZ,
+	double translationMatrixData[4*4] =  {	1,	0,	0,	p.transX,
+											0,	1,	0,	p.transY,
+											0,	0,	1,	p.transZ,
 											0,	0,	0,	1};
 
 	cv::Mat rotationMatrixRoll(4,4,CV_64F,rotationMatrixRollData);
@@ -40,20 +35,37 @@ cv::Mat createHomogeneousTransformationMatrix(
 	cv::Mat translationMatrix(4,4,CV_64F,translationMatrixData);
 
 	return (translationMatrix * ((rotationMatrixYaw*rotationMatrixPitch)*rotationMatrixRoll));
-
+}
 
 }
 
-cv::Mat createPoint(double x, double y, double z){
 
-	cv::Mat point(4,1,CV_64F);
+Matrix::Matrix(const Parameter& parameter)
+	: cv::Mat(createHomogeneousTransformationMatrix(parameter)),
+	  mParameter(parameter)
+{}
 
-	point.at<double>(0) = x;
-	point.at<double>(1) = y;
-	point.at<double>(2) = z;
-	point.at<double>(3) = 1;
+Matrix::Matrix(cv::MatExpr matExpr)
+	: cv::Mat(matExpr)
+{}
 
-	return point;
+
+Point3d::Point3d()
+	: cv::Mat(4,1,CV_64F)
+{}
+
+Point3d::Point3d(double x, double y, double z)
+	: cv::Mat(4,1,CV_64F)
+{
+	at<double>(0) = x;
+	at<double>(1) = y;
+	at<double>(2) = z;
+	at<double>(3) = 1;
 }
+
+Point3d::Point3d(cv::MatExpr matExpr)
+	: cv::Mat(matExpr)
+{}
+
 
 }
